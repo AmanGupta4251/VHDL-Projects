@@ -1,0 +1,15 @@
+v 4
+file . "tb_two_way_handshake.vhd" "22f0fbfba95c7dd4426be3589e83af9f2eb125e8" "20260924162422.071":
+  entity tb_two_way_handshake at 1( 0) + 0 on 33;
+  architecture behavioral of tb_two_way_handshake at 8( 110) + 0 on 34;
+file . "two_way_handshake.vhd" "2d81c165a1521c3dd06653342386ba48fd2066fe" "20260924162415.151":
+  entity dff at 1( 0) + 0 on 23;
+  architecture rtl of dff at 13( 213) + 0 on 24;
+  entity sender at 26( 439) + 0 on 25;
+  architecture rtl of sender at 42( 856) + 0 on 26;
+  entity receiver at 97( 2218) + 0 on 27;
+  architecture rtl of receiver at 112( 2604) + 0 on 28;
+  entity synchronizer at 158( 3642) + 0 on 29;
+  architecture structural of synchronizer at 170( 3877) + 0 on 30;
+  entity two_way_handshake at 195( 4302) + 0 on 31;
+  architecture structural of two_way_handshake at 213( 4846) + 0 on 32;
