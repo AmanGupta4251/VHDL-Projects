@@ -17,34 +17,25 @@ entity sram_26kb is
     );
 end entity sram_26kb;
 
-
 architecture behavioral of sram_26kb is
 
-    type memory_type is array (
-        0 to DEPTH - 1
-    ) of std_logic_vector(DATA_WIDTH - 1 downto 0);
+    type memory_type is array (0 to DEPTH - 1)
+        of std_logic_vector(DATA_WIDTH - 1 downto 0);
 
-    signal memory : memory_type :=
-        (others => (others => '0'));
+    signal memory : memory_type := (others => (others => '0'));
 
 begin
 
     process(clk)
-
     begin
-
         if rising_edge(clk) then
 
             if write_en = '1' then
-
                 memory(write_addr) <= write_data;
-
             end if;
 
             read_data <= memory(read_addr);
-
         end if;
-
     end process;
 
 end architecture behavioral;
