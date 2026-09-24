@@ -1,0 +1,7 @@
+v 4
+file . "tb_async_fifo_26kb.vhd" "02eab99c386fdd449c7fa5bac36e6f4a92b98ffb" "20260924175652.590":
+  entity tb_async_fifo_26kb at 1( 0) + 0 on 25;
+  architecture behavioral of tb_async_fifo_26kb at 11( 150) + 0 on 26;
+file . "async_fifo_26kb.vhd" "e2400c58787eca59f7a394b14aa5c43c9382d0b4" "20260924175652.569":
+  entity async_fifo_26kb at 1( 0) + 0 on 23;
+  architecture behavioral of async_fifo_26kb at 26( 602) + 0 on 24;
