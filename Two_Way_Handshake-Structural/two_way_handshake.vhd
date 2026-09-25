@@ -40,53 +40,39 @@ entity sender is
 end sender;
 
 architecture rtl of sender is
-
-    type state_type is (IDLE, WAIT_ACK_HIGH, WAIT_ACK_LOW);
-    signal state : state_type;
-
+    type state_type is (IDLE, WAIT_ACK);
+    signal state   : state_type;
+    signal req_reg : STD_LOGIC;
 begin
+
+    req <= req_reg;
 
     process(clk, rst)
     begin
         if rst = '1' then
             state    <= IDLE;
-            req      <= '0';
+            req_reg  <= '0';
             busy     <= '0';
             data_reg <= (others => '0');
-
         elsif rising_edge(clk) then
-
             case state is
-
                 when IDLE =>
-                    req  <= '0';
                     busy <= '0';
 
                     if start = '1' then
                         data_reg <= data_in;
-                        req      <= '1';
+                        req_reg  <= not req_reg;
                         busy     <= '1';
-                        state    <= WAIT_ACK_HIGH;
+                        state    <= WAIT_ACK;
                     end if;
 
-                when WAIT_ACK_HIGH =>
-                    req  <= '1';
+                when WAIT_ACK =>
                     busy <= '1';
 
-                    if ack_sync = '1' then
-                        req   <= '0';
-                        state <= WAIT_ACK_LOW;
-                    end if;
-
-                when WAIT_ACK_LOW =>
-                    req  <= '0';
-                    busy <= '1';
-
-                    if ack_sync = '0' then
+                    if ack_sync = req_reg then
                         busy  <= '0';
                         state <= IDLE;
                     end if;
-
             end case;
         end if;
     end process;
@@ -110,45 +96,25 @@ entity receiver is
 end receiver;
 
 architecture rtl of receiver is
-
-    type state_type is (IDLE, WAIT_REQ_LOW);
-    signal state : state_type;
-
+    signal ack_reg : STD_LOGIC;
 begin
+
+    ack <= ack_reg;
 
     process(clk, rst)
     begin
         if rst = '1' then
-            state    <= IDLE;
-            ack      <= '0';
+            ack_reg  <= '0';
             done     <= '0';
             data_out <= (others => '0');
-
         elsif rising_edge(clk) then
-
             done <= '0';
 
-            case state is
-
-                when IDLE =>
-                    ack <= '0';
-
-                    if req_sync = '1' then
-                        data_out <= data_in;
-                        ack      <= '1';
-                        done     <= '1';
-                        state    <= WAIT_REQ_LOW;
-                    end if;
-
-                when WAIT_REQ_LOW =>
-                    ack <= '1';
-
-                    if req_sync = '0' then
-                        ack   <= '0';
-                        state <= IDLE;
-                    end if;
-
-            end case;
+            if req_sync /= ack_reg then
+                data_out <= data_in;
+                ack_reg  <= req_sync;
+                done     <= '1';
+            end if;
         end if;
     end process;
 
@@ -168,9 +134,7 @@ entity synchronizer is
 end synchronizer;
 
 architecture structural of synchronizer is
-
     signal q1 : STD_LOGIC;
-
 begin
 
     FF1 : entity work.dff
@@ -197,11 +161,11 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity two_way_handshake is
     port (
-        clk_sender   : in STD_LOGIC;
-        clk_receiver : in STD_LOGIC;
-        reset        : in STD_LOGIC;
-        start        : in STD_LOGIC;
-        data_in      : in STD_LOGIC_VECTOR(7 downto 0);
+        clk_sender   : in  STD_LOGIC;
+        clk_receiver : in  STD_LOGIC;
+        reset        : in  STD_LOGIC;
+        start        : in  STD_LOGIC;
+        data_in      : in  STD_LOGIC_VECTOR(7 downto 0);
         data_out     : out STD_LOGIC_VECTOR(7 downto 0);
         done         : out STD_LOGIC;
         busy         : out STD_LOGIC;
@@ -211,15 +175,11 @@ entity two_way_handshake is
 end two_way_handshake;
 
 architecture structural of two_way_handshake is
-
     signal req_internal : STD_LOGIC;
     signal ack_internal : STD_LOGIC;
-
-    signal req_sync : STD_LOGIC;
-    signal ack_sync : STD_LOGIC;
-
-    signal data_sender : STD_LOGIC_VECTOR(7 downto 0);
-
+    signal req_sync     : STD_LOGIC;
+    signal ack_sync     : STD_LOGIC;
+    signal data_sender  : STD_LOGIC_VECTOR(7 downto 0);
 begin
 
     SENDER_INST : entity work.sender
