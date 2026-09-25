@@ -77,7 +77,6 @@ begin
 
         reset <= '0';
 
-        -- First write sequence
         wait until rising_edge(wr_clk);
         wr_en   <= '1';
         wr_data <= x"11";
@@ -94,10 +93,8 @@ begin
         wait until rising_edge(wr_clk);
         wr_en <= '0';
 
-        -- Allow the write pointer to reach the read clock domain.
         wait for 100 ns;
 
-        -- First read sequence
         rd_en <= '1';
 
         wait until rising_edge(rd_clk);
@@ -130,14 +127,12 @@ begin
 
         rd_en <= '0';
 
-        -- Allow the empty indication to propagate back.
         wait for 100 ns;
 
         assert empty = '1'
             report "ERROR: FIFO should be EMPTY"
             severity error;
 
-        -- Second write sequence
         wait until rising_edge(wr_clk);
         wr_en   <= '1';
         wr_data <= x"A5";
@@ -148,10 +143,8 @@ begin
         wait until rising_edge(wr_clk);
         wr_en <= '0';
 
-        -- Allow the write pointer to reach the read clock domain.
         wait for 100 ns;
 
-        -- Second read sequence
         rd_en <= '1';
 
         wait until rising_edge(rd_clk);
