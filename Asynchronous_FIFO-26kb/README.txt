@@ -49,4 +49,3 @@ empty
 
 IMPORTANT:
 The standalone sram_26kb.vhd is not used by async_fifo_26kb.vhd.
-This is intentional so that the FIFO remains 100% behavioral as requested.
